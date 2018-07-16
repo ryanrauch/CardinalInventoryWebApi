@@ -8,5 +8,7 @@ namespace CardinalInventoryWebApi
     public static class Constants
     {
         public const string DefaultConnection = "DefaultConnection";
+        public const string JwtSecretKey = "JWTSecretKey";
+
     }
 }

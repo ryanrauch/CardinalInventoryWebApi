@@ -12,6 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using CardinalInventoryWebApi.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using CardinalInventoryWebApi.Data.Models;
 
 namespace CardinalInventoryWebApi
 {
@@ -37,17 +40,44 @@ namespace CardinalInventoryWebApi
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration[Constants.DefaultConnection]));
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            //services.AddIdentity<ApplicationUser, ApplicationRole>()
+            //        .AddEntityFrameworkStores<ApplicationDbContext>()
+            //        .AddDefaultTokenProviders();
+            services.AddDefaultIdentity<ApplicationUser>()
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = "Jwt";
+            //    options.DefaultChallengeScheme = "Jwt";
+            //})
+            //.AddJwtBearer("Jwt", options =>
+            //{
+            //    options.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateAudience = false,
+            //        //ValidAudience = "the audience you want to validate",
+            //        ValidateIssuer = false,
+            //        //ValidIssuer = "the isser you want to validate",
+            //        ValidateIssuerSigningKey = true,
+            //        //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Constants.JwtSecretNeedsToBeSecured)),
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration[Constants.JwtSecretKey])),
+            //        ValidateLifetime = true, //validate the expiration and not before values in the token
+            //        ClockSkew = TimeSpan.FromMinutes(5) //5 minute tolerance for the expiration date
+            //    };
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
+                SeedDataInitializer.SeedData(serviceProvider);
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }

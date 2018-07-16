@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CardinalInventoryWebApi.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -17,10 +17,17 @@ namespace CardinalInventoryWebApi.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<StockItemCategory>()
+                   .HasKey(s => s.StockItemCategoryId);
+
             builder.Entity<StockItem>()
                    .HasKey(s => s.StockItemId);
             builder.Entity<StockItem>()
-                   .Property(i => i.UnitPrice)
+                   .HasOne(i => i.StockItemCategory)
+                   .WithMany()
+                   .HasForeignKey("StockItemCategoryId");
+            builder.Entity<StockItem>()
+                   .Property(i => i.UnitCost)
                    .HasColumnType("decimal(6,2)");
 
             builder.Entity<Bar>()
@@ -74,6 +81,7 @@ namespace CardinalInventoryWebApi.Data
         }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<StockItemCategory> StockItemCategories { get; set; }
         public DbSet<StockItem> StockItems { get; set; }
         public DbSet<Bar> Bars { get; set; }
         public DbSet<Building> Buidings { get; set; }

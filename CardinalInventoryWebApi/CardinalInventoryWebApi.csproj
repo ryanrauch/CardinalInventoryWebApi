@@ -6,10 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\Migrations\20180713052256_01.cs" />
-    <Compile Remove="Data\Migrations\20180713052256_01.Designer.cs" />
-    <Compile Remove="Data\Migrations\20180713052416_01.cs" />
-    <Compile Remove="Data\Migrations\20180713052416_01.Designer.cs" />
+    <Compile Remove="Migrations\20180716063524_05.cs" />
+    <Compile Remove="Migrations\20180716063524_05.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
