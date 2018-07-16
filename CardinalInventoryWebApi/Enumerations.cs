@@ -10,7 +10,7 @@ namespace CardinalInventoryWebApi
         UserViewedAuto = 0,
         UserViewedManual = 1,
         ReceivedManual = 2,
-        ReceivedAuto = 3
-        // possibly Removed?
+        ReceivedAuto = 3,
+        RemovedDuringInventory = 4
     }
 }
