@@ -17,18 +17,35 @@ namespace CardinalInventoryWebApi.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<StockItemCategory>()
-                   .HasKey(s => s.StockItemCategoryId);
+            //builder.Entity<StockItemCategory>()
+            //       .HasKey(s => s.StockItemCategoryId);
 
             builder.Entity<StockItem>()
                    .HasKey(s => s.StockItemId);
-            builder.Entity<StockItem>()
-                   .HasOne(i => i.StockItemCategory)
-                   .WithMany()
-                   .HasForeignKey("StockItemCategoryId");
+            //builder.Entity<StockItem>()
+            //       .HasOne(i => i.StockItemCategory)
+            //       .WithMany()
+            //       .HasForeignKey("StockItemCategoryId");
             builder.Entity<StockItem>()
                    .Property(i => i.UnitCost)
                    .HasColumnType("decimal(6,2)");
+
+            builder.Entity<SerializedStockItem>()
+                   .HasKey(s => s.SerializedStockItemId);
+            builder.Entity<SerializedStockItem>()
+                   .HasOne(i => i.StockItem)
+                   .WithMany()
+                   .HasForeignKey("StockItemId");
+            builder.Entity<SerializedStockItem>()
+                   .HasOne(i => i.Area)
+                   .WithMany()
+                   .HasForeignKey("AreaId");
+            builder.Entity<SerializedStockItem>()
+                   .Property(i => i.UnitCost)
+                   .HasColumnType("decimal(6,2)");
+            builder.Entity<SerializedStockItem>()
+                   .Property(i => i.Barcode)
+                   .IsRequired(true);
 
             builder.Entity<Bar>()
                    .HasKey(b => b.BarId);
@@ -40,12 +57,19 @@ namespace CardinalInventoryWebApi.Data
                    .WithMany()
                    .HasForeignKey("BarId");
 
-            builder.Entity<Area>()
-                   .HasKey(a => a.AreaId);
-            builder.Entity<Area>()
+            builder.Entity<Floor>()
+                   .HasKey(b => b.FloorId);
+            builder.Entity<Floor>()
                    .HasOne(i => i.Building)
                    .WithMany()
                    .HasForeignKey("BuildingId");
+
+            builder.Entity<Area>()
+                   .HasKey(a => a.AreaId);
+            builder.Entity<Area>()
+                   .HasOne(i => i.Floor)
+                   .WithMany()
+                   .HasForeignKey("FloorId");
 
             builder.Entity<InventoryActionHistory>()
                    .HasKey(a => a.InventoryActionHistoryId);
@@ -54,9 +78,10 @@ namespace CardinalInventoryWebApi.Data
                    .WithMany()
                    .HasForeignKey("AreaId");
             builder.Entity<InventoryActionHistory>()
-                   .HasOne(i => i.StockItem)
+                   .HasOne(i => i.SerializedStockItem)
                    .WithMany()
-                   .HasForeignKey("StockItemId");
+                   .HasForeignKey("SerializedStockItemId")
+                   .OnDelete(DeleteBehavior.Restrict);
             builder.Entity<InventoryActionHistory>()
                    .HasOne(i => i.ApplicationUser)
                    .WithMany()
@@ -65,6 +90,7 @@ namespace CardinalInventoryWebApi.Data
                    .Property(i => i.ItemLevel)
                    .HasColumnType("decimal(6,2)");
 
+            // possibly remove this
             builder.Entity<InventoryHistory>()
                    .HasKey(a => a.InventoryHistoryId);
             builder.Entity<InventoryHistory>()
@@ -81,10 +107,13 @@ namespace CardinalInventoryWebApi.Data
         }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<StockItemCategory> StockItemCategories { get; set; }
+        //public DbSet<StockItemCategory> StockItemCategories { get; set; }
         public DbSet<StockItem> StockItems { get; set; }
+        public DbSet<StockItemTag> StockItemTags { get; set; }
+        public DbSet<SerializedStockItem> SerializedStockItems { get; set; }
         public DbSet<Bar> Bars { get; set; }
-        public DbSet<Building> Buidings { get; set; }
+        public DbSet<Building> Buildings { get; set; }
+        public DbSet<Floor> Floors { get; set; }
         public DbSet<Area> Areas { get; set; }
         public DbSet<InventoryActionHistory> InventoryActionHistories { get; set; }
         public DbSet<InventoryHistory> InventoryHistories { get; set; }

@@ -65,15 +65,19 @@ namespace CardinalInventoryWebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StockItemCategories",
+                name: "StockItems",
                 columns: table => new
                 {
-                    StockItemCategoryId = table.Column<Guid>(nullable: false),
-                    Description = table.Column<string>(nullable: true)
+                    StockItemId = table.Column<Guid>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    UnitSizeMilliliters = table.Column<int>(nullable: false),
+                    UnitCost = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
+                    ImagePath = table.Column<string>(nullable: true),
+                    Barcode = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StockItemCategories", x => x.StockItemCategoryId);
+                    table.PrimaryKey("PK_StockItems", x => x.StockItemId);
                 });
 
             migrationBuilder.CreateTable(
@@ -122,8 +126,8 @@ namespace CardinalInventoryWebApi.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(nullable: false),
-                    ProviderKey = table.Column<string>(nullable: false),
+                    LoginProvider = table.Column<string>(maxLength: 128, nullable: false),
+                    ProviderKey = table.Column<string>(maxLength: 128, nullable: false),
                     ProviderDisplayName = table.Column<string>(nullable: true),
                     UserId = table.Column<Guid>(nullable: false)
                 },
@@ -167,8 +171,8 @@ namespace CardinalInventoryWebApi.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(nullable: false),
-                    LoginProvider = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
+                    LoginProvider = table.Column<string>(maxLength: 128, nullable: false),
+                    Name = table.Column<string>(maxLength: 128, nullable: false),
                     Value = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -183,7 +187,7 @@ namespace CardinalInventoryWebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Buidings",
+                name: "Buildings",
                 columns: table => new
                 {
                     BuildingId = table.Column<Guid>(nullable: false),
@@ -193,9 +197,9 @@ namespace CardinalInventoryWebApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Buidings", x => x.BuildingId);
+                    table.PrimaryKey("PK_Buildings", x => x.BuildingId);
                     table.ForeignKey(
-                        name: "FK_Buidings_Bars_BarId",
+                        name: "FK_Buildings_Bars_BarId",
                         column: x => x.BarId,
                         principalTable: "Bars",
                         principalColumn: "BarId",
@@ -203,24 +207,41 @@ namespace CardinalInventoryWebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StockItems",
+                name: "StockItemTags",
                 columns: table => new
                 {
+                    StockItemTagId = table.Column<Guid>(nullable: false),
                     StockItemId = table.Column<Guid>(nullable: false),
-                    StockItemCategoryId = table.Column<Guid>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    UnitSizeMilliliters = table.Column<int>(nullable: false),
-                    UnitCost = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
-                    ImagePath = table.Column<string>(nullable: true)
+                    Tag = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StockItems", x => x.StockItemId);
+                    table.PrimaryKey("PK_StockItemTags", x => x.StockItemTagId);
                     table.ForeignKey(
-                        name: "FK_StockItems_StockItemCategories_StockItemCategoryId",
-                        column: x => x.StockItemCategoryId,
-                        principalTable: "StockItemCategories",
-                        principalColumn: "StockItemCategoryId",
+                        name: "FK_StockItemTags_StockItems_StockItemId",
+                        column: x => x.StockItemId,
+                        principalTable: "StockItems",
+                        principalColumn: "StockItemId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Floors",
+                columns: table => new
+                {
+                    FloorId = table.Column<Guid>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    BuildingId = table.Column<Guid>(nullable: false),
+                    Active = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Floors", x => x.FloorId);
+                    table.ForeignKey(
+                        name: "FK_Floors_Buildings_BuildingId",
+                        column: x => x.BuildingId,
+                        principalTable: "Buildings",
+                        principalColumn: "BuildingId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -230,52 +251,17 @@ namespace CardinalInventoryWebApi.Migrations
                 {
                     AreaId = table.Column<Guid>(nullable: false),
                     Description = table.Column<string>(nullable: true),
-                    BuildingId = table.Column<Guid>(nullable: false),
+                    FloorId = table.Column<Guid>(nullable: false),
                     Active = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Areas", x => x.AreaId);
                     table.ForeignKey(
-                        name: "FK_Areas_Buidings_BuildingId",
-                        column: x => x.BuildingId,
-                        principalTable: "Buidings",
-                        principalColumn: "BuildingId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "InventoryActionHistories",
-                columns: table => new
-                {
-                    InventoryActionHistoryId = table.Column<Guid>(nullable: false),
-                    AreaId = table.Column<Guid>(nullable: false),
-                    StockItemId = table.Column<Guid>(nullable: false),
-                    ApplicationUserId = table.Column<Guid>(nullable: false),
-                    Timestamp = table.Column<DateTime>(nullable: false),
-                    ItemLevel = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
-                    Action = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InventoryActionHistories", x => x.InventoryActionHistoryId);
-                    table.ForeignKey(
-                        name: "FK_InventoryActionHistories_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_InventoryActionHistories_Areas_AreaId",
-                        column: x => x.AreaId,
-                        principalTable: "Areas",
-                        principalColumn: "AreaId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_InventoryActionHistories_StockItems_StockItemId",
-                        column: x => x.StockItemId,
-                        principalTable: "StockItems",
-                        principalColumn: "StockItemId",
+                        name: "FK_Areas_Floors_FloorId",
+                        column: x => x.FloorId,
+                        principalTable: "Floors",
+                        principalColumn: "FloorId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -306,10 +292,75 @@ namespace CardinalInventoryWebApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "SerializedStockItems",
+                columns: table => new
+                {
+                    SerializedStockItemId = table.Column<Guid>(nullable: false),
+                    StockItemId = table.Column<Guid>(nullable: false),
+                    Barcode = table.Column<string>(nullable: false),
+                    UnitCost = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
+                    CurrentItemLevel = table.Column<decimal>(nullable: false),
+                    ReceivedDate = table.Column<DateTime>(nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(nullable: false),
+                    AreaId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SerializedStockItems", x => x.SerializedStockItemId);
+                    table.ForeignKey(
+                        name: "FK_SerializedStockItems_Areas_AreaId",
+                        column: x => x.AreaId,
+                        principalTable: "Areas",
+                        principalColumn: "AreaId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SerializedStockItems_StockItems_StockItemId",
+                        column: x => x.StockItemId,
+                        principalTable: "StockItems",
+                        principalColumn: "StockItemId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryActionHistories",
+                columns: table => new
+                {
+                    InventoryActionHistoryId = table.Column<Guid>(nullable: false),
+                    AreaId = table.Column<Guid>(nullable: false),
+                    SerializedStockItemId = table.Column<Guid>(nullable: false),
+                    ApplicationUserId = table.Column<Guid>(nullable: false),
+                    Timestamp = table.Column<DateTime>(nullable: false),
+                    ItemLevel = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
+                    Action = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryActionHistories", x => x.InventoryActionHistoryId);
+                    table.ForeignKey(
+                        name: "FK_InventoryActionHistories_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InventoryActionHistories_Areas_AreaId",
+                        column: x => x.AreaId,
+                        principalTable: "Areas",
+                        principalColumn: "AreaId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InventoryActionHistories_SerializedStockItems_SerializedStockItemId",
+                        column: x => x.SerializedStockItemId,
+                        principalTable: "SerializedStockItems",
+                        principalColumn: "SerializedStockItemId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Areas_BuildingId",
+                name: "IX_Areas_FloorId",
                 table: "Areas",
-                column: "BuildingId");
+                column: "FloorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -351,9 +402,14 @@ namespace CardinalInventoryWebApi.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Buidings_BarId",
-                table: "Buidings",
+                name: "IX_Buildings_BarId",
+                table: "Buildings",
                 column: "BarId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Floors_BuildingId",
+                table: "Floors",
+                column: "BuildingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InventoryActionHistories_ApplicationUserId",
@@ -366,9 +422,9 @@ namespace CardinalInventoryWebApi.Migrations
                 column: "AreaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InventoryActionHistories_StockItemId",
+                name: "IX_InventoryActionHistories_SerializedStockItemId",
                 table: "InventoryActionHistories",
-                column: "StockItemId");
+                column: "SerializedStockItemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InventoryHistories_AreaId",
@@ -381,9 +437,19 @@ namespace CardinalInventoryWebApi.Migrations
                 column: "StockItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StockItems_StockItemCategoryId",
-                table: "StockItems",
-                column: "StockItemCategoryId");
+                name: "IX_SerializedStockItems_AreaId",
+                table: "SerializedStockItems",
+                column: "AreaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SerializedStockItems_StockItemId",
+                table: "SerializedStockItems",
+                column: "StockItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockItemTags_StockItemId",
+                table: "StockItemTags",
+                column: "StockItemId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -410,10 +476,16 @@ namespace CardinalInventoryWebApi.Migrations
                 name: "InventoryHistories");
 
             migrationBuilder.DropTable(
+                name: "StockItemTags");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "SerializedStockItems");
 
             migrationBuilder.DropTable(
                 name: "Areas");
@@ -422,10 +494,10 @@ namespace CardinalInventoryWebApi.Migrations
                 name: "StockItems");
 
             migrationBuilder.DropTable(
-                name: "Buidings");
+                name: "Floors");
 
             migrationBuilder.DropTable(
-                name: "StockItemCategories");
+                name: "Buildings");
 
             migrationBuilder.DropTable(
                 name: "Bars");

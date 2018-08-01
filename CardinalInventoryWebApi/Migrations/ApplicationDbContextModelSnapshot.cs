@@ -109,13 +109,13 @@ namespace CardinalInventoryWebApi.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<Guid>("BuildingId");
-
                     b.Property<string>("Description");
+
+                    b.Property<Guid>("FloorId");
 
                     b.HasKey("AreaId");
 
-                    b.HasIndex("BuildingId");
+                    b.HasIndex("FloorId");
 
                     b.ToTable("Areas");
                 });
@@ -149,7 +149,25 @@ namespace CardinalInventoryWebApi.Migrations
 
                     b.HasIndex("BarId");
 
-                    b.ToTable("Buidings");
+                    b.ToTable("Buildings");
+                });
+
+            modelBuilder.Entity("CardinalInventoryWebApi.Data.Models.Floor", b =>
+                {
+                    b.Property<Guid>("FloorId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Active");
+
+                    b.Property<Guid>("BuildingId");
+
+                    b.Property<string>("Description");
+
+                    b.HasKey("FloorId");
+
+                    b.HasIndex("BuildingId");
+
+                    b.ToTable("Floors");
                 });
 
             modelBuilder.Entity("CardinalInventoryWebApi.Data.Models.InventoryActionHistory", b =>
@@ -166,7 +184,7 @@ namespace CardinalInventoryWebApi.Migrations
                     b.Property<decimal>("ItemLevel")
                         .HasColumnType("decimal(6,2)");
 
-                    b.Property<Guid>("StockItemId");
+                    b.Property<Guid>("SerializedStockItemId");
 
                     b.Property<DateTime>("Timestamp");
 
@@ -176,7 +194,7 @@ namespace CardinalInventoryWebApi.Migrations
 
                     b.HasIndex("AreaId");
 
-                    b.HasIndex("StockItemId");
+                    b.HasIndex("SerializedStockItemId");
 
                     b.ToTable("InventoryActionHistories");
                 });
@@ -204,16 +222,46 @@ namespace CardinalInventoryWebApi.Migrations
                     b.ToTable("InventoryHistories");
                 });
 
+            modelBuilder.Entity("CardinalInventoryWebApi.Data.Models.SerializedStockItem", b =>
+                {
+                    b.Property<Guid>("SerializedStockItemId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("AreaId");
+
+                    b.Property<string>("Barcode")
+                        .IsRequired();
+
+                    b.Property<decimal>("CurrentItemLevel");
+
+                    b.Property<DateTime>("LastModifiedDate");
+
+                    b.Property<DateTime>("ReceivedDate");
+
+                    b.Property<Guid>("StockItemId");
+
+                    b.Property<decimal>("UnitCost")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.HasKey("SerializedStockItemId");
+
+                    b.HasIndex("AreaId");
+
+                    b.HasIndex("StockItemId");
+
+                    b.ToTable("SerializedStockItems");
+                });
+
             modelBuilder.Entity("CardinalInventoryWebApi.Data.Models.StockItem", b =>
                 {
                     b.Property<Guid>("StockItemId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Barcode");
+
                     b.Property<string>("Description");
 
                     b.Property<string>("ImagePath");
-
-                    b.Property<Guid>("StockItemCategoryId");
 
                     b.Property<decimal>("UnitCost")
                         .HasColumnType("decimal(6,2)");
@@ -222,21 +270,23 @@ namespace CardinalInventoryWebApi.Migrations
 
                     b.HasKey("StockItemId");
 
-                    b.HasIndex("StockItemCategoryId");
-
                     b.ToTable("StockItems");
                 });
 
-            modelBuilder.Entity("CardinalInventoryWebApi.Data.Models.StockItemCategory", b =>
+            modelBuilder.Entity("CardinalInventoryWebApi.Data.Models.StockItemTag", b =>
                 {
-                    b.Property<Guid>("StockItemCategoryId")
+                    b.Property<Guid>("StockItemTagId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Description");
+                    b.Property<Guid>("StockItemId");
 
-                    b.HasKey("StockItemCategoryId");
+                    b.Property<string>("Tag");
 
-                    b.ToTable("StockItemCategories");
+                    b.HasKey("StockItemTagId");
+
+                    b.HasIndex("StockItemId");
+
+                    b.ToTable("StockItemTags");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -279,9 +329,11 @@ namespace CardinalInventoryWebApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.Property<string>("LoginProvider");
+                    b.Property<string>("LoginProvider")
+                        .HasMaxLength(128);
 
-                    b.Property<string>("ProviderKey");
+                    b.Property<string>("ProviderKey")
+                        .HasMaxLength(128);
 
                     b.Property<string>("ProviderDisplayName");
 
@@ -311,9 +363,11 @@ namespace CardinalInventoryWebApi.Migrations
                 {
                     b.Property<Guid>("UserId");
 
-                    b.Property<string>("LoginProvider");
+                    b.Property<string>("LoginProvider")
+                        .HasMaxLength(128);
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .HasMaxLength(128);
 
                     b.Property<string>("Value");
 
@@ -324,9 +378,9 @@ namespace CardinalInventoryWebApi.Migrations
 
             modelBuilder.Entity("CardinalInventoryWebApi.Data.Models.Area", b =>
                 {
-                    b.HasOne("CardinalInventoryWebApi.Data.Models.Building", "Building")
+                    b.HasOne("CardinalInventoryWebApi.Data.Models.Floor", "Floor")
                         .WithMany()
-                        .HasForeignKey("BuildingId")
+                        .HasForeignKey("FloorId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -335,6 +389,14 @@ namespace CardinalInventoryWebApi.Migrations
                     b.HasOne("CardinalInventoryWebApi.Data.Models.Bar", "Bar")
                         .WithMany()
                         .HasForeignKey("BarId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CardinalInventoryWebApi.Data.Models.Floor", b =>
+                {
+                    b.HasOne("CardinalInventoryWebApi.Data.Models.Building", "Building")
+                        .WithMany()
+                        .HasForeignKey("BuildingId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -350,10 +412,10 @@ namespace CardinalInventoryWebApi.Migrations
                         .HasForeignKey("AreaId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("CardinalInventoryWebApi.Data.Models.StockItem", "StockItem")
+                    b.HasOne("CardinalInventoryWebApi.Data.Models.SerializedStockItem", "SerializedStockItem")
                         .WithMany()
-                        .HasForeignKey("StockItemId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("SerializedStockItemId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("CardinalInventoryWebApi.Data.Models.InventoryHistory", b =>
@@ -369,11 +431,24 @@ namespace CardinalInventoryWebApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CardinalInventoryWebApi.Data.Models.StockItem", b =>
+            modelBuilder.Entity("CardinalInventoryWebApi.Data.Models.SerializedStockItem", b =>
                 {
-                    b.HasOne("CardinalInventoryWebApi.Data.Models.StockItemCategory", "StockItemCategory")
+                    b.HasOne("CardinalInventoryWebApi.Data.Models.Area", "Area")
                         .WithMany()
-                        .HasForeignKey("StockItemCategoryId")
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CardinalInventoryWebApi.Data.Models.StockItem", "StockItem")
+                        .WithMany()
+                        .HasForeignKey("StockItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CardinalInventoryWebApi.Data.Models.StockItemTag", b =>
+                {
+                    b.HasOne("CardinalInventoryWebApi.Data.Models.StockItem", "StockItem")
+                        .WithMany()
+                        .HasForeignKey("StockItemId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

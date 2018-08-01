@@ -25,7 +25,7 @@ namespace CardinalInventoryWebApi.Controllers
         [HttpGet]
         public IEnumerable<Building> GetBuidings()
         {
-            return _context.Buidings;
+            return _context.Buildings;
         }
 
         // GET: api/Buildings/5
@@ -37,7 +37,7 @@ namespace CardinalInventoryWebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var building = await _context.Buidings.FindAsync(id);
+            var building = await _context.Buildings.FindAsync(id);
 
             if (building == null)
             {
@@ -91,7 +91,7 @@ namespace CardinalInventoryWebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Buidings.Add(building);
+            _context.Buildings.Add(building);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetBuilding", new { id = building.BuildingId }, building);
@@ -106,13 +106,13 @@ namespace CardinalInventoryWebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var building = await _context.Buidings.FindAsync(id);
+            var building = await _context.Buildings.FindAsync(id);
             if (building == null)
             {
                 return NotFound();
             }
 
-            _context.Buidings.Remove(building);
+            _context.Buildings.Remove(building);
             await _context.SaveChangesAsync();
 
             return Ok(building);
@@ -120,7 +120,7 @@ namespace CardinalInventoryWebApi.Controllers
 
         private bool BuildingExists(Guid id)
         {
-            return _context.Buidings.Any(e => e.BuildingId == id);
+            return _context.Buildings.Any(e => e.BuildingId == id);
         }
     }
 }

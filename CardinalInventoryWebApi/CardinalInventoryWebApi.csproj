@@ -6,8 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20180716063524_05.cs" />
-    <Compile Remove="Migrations\20180716063524_05.Designer.cs" />
+    <Compile Remove="Controllers\StockItemCategoriesController.cs" />
   </ItemGroup>
 
   <ItemGroup>

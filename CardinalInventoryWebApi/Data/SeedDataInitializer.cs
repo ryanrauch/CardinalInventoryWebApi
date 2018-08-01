@@ -34,29 +34,38 @@ namespace CardinalInventoryWebApi.Data
                         Description = "11500B Rock Rose",
                         Active = true
                     };
-                    await context.Buidings.AddAsync(building);
+                    await context.Buildings.AddAsync(building);
+
+                    var floor = new Floor()
+                    {
+                        FloorId = Guid.NewGuid(),
+                        Description = "Ground-Level",
+                        BuildingId = building.BuildingId,
+                        Active=true
+                    };
+                    await context.Floors.AddAsync(floor);
 
                     var outside = new Area()
                     {
                         AreaId = Guid.NewGuid(),
-                        BuildingId = building.BuildingId,
+                        FloorId = floor.FloorId,
                         Description = "Outside Bar",
                         Active = true
                     };
                     await context.Areas.AddAsync(outside);
                 }
-                if (context.StockItemCategories.Count() == 0)
+                /*if (context.StockItems.Count() == 0)
                 {
-                    var sic = new StockItemCategory()
-                    {
-                        StockItemCategoryId = Guid.NewGuid(),
-                        Description = "Whiskey"
-                    };
-                    await context.StockItemCategories.AddAsync(sic);
+                    //var sic = new StockItemCategory()
+                    //{
+                    //    StockItemCategoryId = Guid.NewGuid(),
+                    //    Description = "Whiskey"
+                    //};
+                    //await context.StockItemCategories.AddAsync(sic);
 
                     var whiskey01 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Bulleit Bourbon",
                         ImagePath = "bulleit-bourbon-1L.png",
@@ -67,7 +76,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey02 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Fireball Cinnamon Whisky",
                         ImagePath = "fireball-cinnamon-whisky-1L.png",
@@ -78,7 +87,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey03 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Jameson Irish Whiskey",
                         ImagePath = "jameson-irish-whiskey-1L.png",
@@ -89,7 +98,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey04 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Maker's Mark Bourbon Whisky",
                         ImagePath = "makers-mark-bourbon-whisky-1L.png",
@@ -100,7 +109,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey05 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Jack Daniel's Old No. 7 Whiskey",
                         ImagePath = "jack-daniels-old-no-7-1L.png",
@@ -111,7 +120,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey06 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Jim Beam Bourbon Whiskey",
                         ImagePath = "jim-beam-bourbon-whiskey-1L.png",
@@ -122,7 +131,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey07 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Johnnie Walker Black Label",
                         ImagePath = "johnnie-walker-black-label-1L.png",
@@ -133,7 +142,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey08 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Evan Williams Bourbon Whiskey Black Label",
                         ImagePath = "evan-williams-black-1L.png",
@@ -144,7 +153,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey09 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Bulleit Rye",
                         ImagePath = "bulleit-rye-1L.png",
@@ -155,7 +164,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey10 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Crown Royal Deluxe",
                         ImagePath = "crown-royal-deluxe-1L.png",
@@ -166,7 +175,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey11 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Buffalo Trace Bourbon",
                         ImagePath = "buffalo-trace-bourbon-1L.png",
@@ -177,7 +186,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey12 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Knob Creek Kentucky Straight Bourbon Whiskey",
                         ImagePath = "knob-creek-kentucky-straight-bourbon-whiskey-1L.png",
@@ -188,7 +197,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey13 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Woodford Reserve Bourbon",
                         ImagePath = "woodford-reserve-bourbon-1L.png",
@@ -199,7 +208,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey14 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Basil Hayden's Kentucky Straight Bourbon Whiskey",
                         ImagePath = "basil-haydens-kentucky-straight-bourbon-whiskey-1L.png",
@@ -210,7 +219,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey15 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "The Macallan 12 Year Sherry Oak",
                         ImagePath = "the-macallan-sherry-oak-12-year-1L.png",
@@ -221,7 +230,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey16 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Seagram's 7 Crown Blended Whiskey",
                         ImagePath = "seagrams-7-crown-1L.png",
@@ -232,7 +241,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey17 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Four Roses Bourbon",
                         ImagePath = "four-roses-bourbon-1L.png",
@@ -243,7 +252,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey18 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Jack Daniel's Tennessee Honey",
                         ImagePath = "jack-daniels-tennessee-honey-1L.png",
@@ -254,7 +263,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey19 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Dewar's White Label",
                         ImagePath = "dewars-white-label-1L.png",
@@ -265,7 +274,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey20 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Hibiki Japanese Harmony Whisky",
                         ImagePath = "hibiki-japanese-harmony-whisky-1L.png",
@@ -276,7 +285,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey21 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Old Overholt Rye Whiskey",
                         ImagePath = "old-overholt-original-1L.png",
@@ -287,7 +296,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey22 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Johnnie Walker Red Label",
                         ImagePath = "johnnie-walker-red-label-1L.png",
@@ -298,7 +307,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey23 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Lagavulin 16 Year",
                         ImagePath = "lagavulin-16-year-1L.png",
@@ -309,7 +318,7 @@ namespace CardinalInventoryWebApi.Data
 
                     var whiskey24 = new StockItem()
                     {
-                        StockItemCategoryId = sic.StockItemCategoryId,
+                        //StockItemCategoryId = sic.StockItemCategoryId,
                         StockItemId = Guid.NewGuid(),
                         Description = "Crown Royal Apple",
                         ImagePath = "crown-royal-regal-apple-1L.png",
@@ -318,6 +327,7 @@ namespace CardinalInventoryWebApi.Data
                     };
                     await context.StockItems.AddAsync(whiskey24);
                 }
+                */
                 await context.SaveChangesAsync();
             }
         }
