@@ -54,6 +54,29 @@ namespace CardinalInventoryWebApi.Data
                     };
                     await context.Areas.AddAsync(outside);
                 }
+                if(context.StockItems.Count() == 0)
+                {
+                    var titos = new StockItem()
+                    {
+                        StockItemId = Guid.NewGuid(),
+                        Description = "Tito's Handmade Vodka 1L",
+                        Barcode = "1994700001",
+                        UnitSizeMilliliters=1000
+                    };
+                    await context.StockItems.AddAsync(titos);
+
+                    var stitos = new SerializedStockItem()
+                    {
+                        SerializedStockItemId = Guid.NewGuid(),
+                        StockItemId = titos.StockItemId,
+                        Barcode = "01209920",
+                        CurrentItemLevel = 1.0M,
+                        ReceivedDate = DateTime.Now,
+                        LastModifiedDate = DateTime.Now
+                    };
+                    await context.SerializedStockItems.AddAsync(stitos);
+                }
+
                 /*if (context.StockItems.Count() == 0)
                 {
                     //var sic = new StockItemCategory()
