@@ -17,18 +17,19 @@ namespace CardinalInventoryWebApi.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            //builder.Entity<StockItemCategory>()
-            //       .HasKey(s => s.StockItemCategoryId);
 
             builder.Entity<StockItem>()
                    .HasKey(s => s.StockItemId);
-            //builder.Entity<StockItem>()
-            //       .HasOne(i => i.StockItemCategory)
-            //       .WithMany()
-            //       .HasForeignKey("StockItemCategoryId");
             builder.Entity<StockItem>()
                    .Property(i => i.UnitCost)
                    .HasColumnType("decimal(6,2)");
+
+            builder.Entity<StockItemTag>()
+                   .HasKey(s => s.StockItemTagId);
+            builder.Entity<StockItemTag>()
+                   .HasOne(i => i.StockItem)
+                   .WithMany()
+                   .HasForeignKey("StockItemId");
 
             builder.Entity<SerializedStockItem>()
                    .HasKey(s => s.SerializedStockItemId);
@@ -47,8 +48,15 @@ namespace CardinalInventoryWebApi.Data
                    .Property(i => i.Barcode)
                    .IsRequired(true);
 
+            builder.Entity<Company>()
+                   .HasKey(i => i.CompanyId);
+
             builder.Entity<Bar>()
                    .HasKey(b => b.BarId);
+            builder.Entity<Bar>()
+                   .HasOne(i => i.Company)
+                   .WithMany()
+                   .HasForeignKey("CompanyId");
 
             builder.Entity<Building>()
                    .HasKey(b => b.BuildingId);
@@ -111,6 +119,7 @@ namespace CardinalInventoryWebApi.Data
         public DbSet<StockItem> StockItems { get; set; }
         public DbSet<StockItemTag> StockItemTags { get; set; }
         public DbSet<SerializedStockItem> SerializedStockItems { get; set; }
+        public DbSet<Company> Companies { get; set; }
         public DbSet<Bar> Bars { get; set; }
         public DbSet<Building> Buildings { get; set; }
         public DbSet<Floor> Floors { get; set; }

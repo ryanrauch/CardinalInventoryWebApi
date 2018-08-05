@@ -19,13 +19,24 @@ namespace CardinalInventoryWebApi.Data
             {
                 if(context.Bars.Count() == 0)
                 {
+                    var company = new Company()
+                    {
+                        CompanyId = Guid.NewGuid(),
+                        Description = "Union Venture Group",
+                        Active = true
+                    };
+                    await context.Companies.AddAsync(company);
+                    await context.SaveChangesAsync();
+
                     var b = new Bar()
                     {
                         BarId = Guid.NewGuid(),
+                        CompanyId = company.CompanyId,
                         Description = "Jack & Ginger's Irish Pub",
                         Active = true
                     };
                     await context.Bars.AddAsync(b);
+                    await context.SaveChangesAsync();
 
                     var building = new Building()
                     {
@@ -35,15 +46,17 @@ namespace CardinalInventoryWebApi.Data
                         Active = true
                     };
                     await context.Buildings.AddAsync(building);
+                    await context.SaveChangesAsync();
 
                     var floor = new Floor()
                     {
                         FloorId = Guid.NewGuid(),
                         Description = "Ground-Level",
                         BuildingId = building.BuildingId,
-                        Active=true
+                        Active = true
                     };
                     await context.Floors.AddAsync(floor);
+                    await context.SaveChangesAsync();
 
                     var outside = new Area()
                     {
@@ -53,8 +66,9 @@ namespace CardinalInventoryWebApi.Data
                         Active = true
                     };
                     await context.Areas.AddAsync(outside);
+                    await context.SaveChangesAsync();
                 }
-                if(context.StockItems.Count() == 0)
+                if (context.StockItems.Count() == 0)
                 {
                     var titos = new StockItem()
                     {
@@ -64,6 +78,7 @@ namespace CardinalInventoryWebApi.Data
                         UnitSizeMilliliters=1000
                     };
                     await context.StockItems.AddAsync(titos);
+                    await context.SaveChangesAsync();
 
                     var stitos = new SerializedStockItem()
                     {
@@ -75,6 +90,7 @@ namespace CardinalInventoryWebApi.Data
                         LastModifiedDate = DateTime.Now
                     };
                     await context.SerializedStockItems.AddAsync(stitos);
+                    await context.SaveChangesAsync();
                 }
 
                 /*if (context.StockItems.Count() == 0)
