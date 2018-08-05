@@ -14,6 +14,6 @@ namespace CardinalInventoryWebApi.Data.Models
         public int UnitSizeMilliliters { get; set; }
         public Decimal UnitCost { get; set; }
         public string ImagePath { get; set; }
-        public string Barcode { get; set; }
+        public string SKU { get; set; }
     }
 }

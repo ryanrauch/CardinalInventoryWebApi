@@ -74,7 +74,7 @@ namespace CardinalInventoryWebApi.Data
                     {
                         StockItemId = Guid.NewGuid(),
                         Description = "Tito's Handmade Vodka 1L",
-                        Barcode = "1994700001",
+                        SKU = "1994700001",
                         UnitSizeMilliliters=1000
                     };
                     await context.StockItems.AddAsync(titos);
