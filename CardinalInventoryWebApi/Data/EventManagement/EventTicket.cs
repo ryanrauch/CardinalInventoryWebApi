@@ -13,6 +13,7 @@ namespace CardinalInventoryWebApi.Data.EventManagement
         public Guid EventTicketAdmissionTypeId { get; set; }
         public EventTicketAdmissionType EventTicketAdmissionType { get; set; }
         public string UniqueIdentifier { get; set; }
+        public TicketPhysicalType TicketPhysicalType { get; set; }
         public bool Enabled { get; set; }
         public Guid EventCustomerId { get; set; }
         public EventCustomer EventCustomer { get; set; }
