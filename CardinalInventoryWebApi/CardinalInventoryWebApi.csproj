@@ -9,6 +9,14 @@
     <Compile Remove="Controllers\StockItemCategoriesController.cs" />
     <Compile Remove="Migrations\20180805044200_04.cs" />
     <Compile Remove="Migrations\20180805044200_04.Designer.cs" />
+    <Compile Remove="Migrations\20180806045223_05.cs" />
+    <Compile Remove="Migrations\20180806045223_05.Designer.cs" />
+    <Compile Remove="Migrations\20180806045425_05.cs" />
+    <Compile Remove="Migrations\20180806045425_05.Designer.cs" />
+    <Compile Remove="Migrations\20180806045635_05.cs" />
+    <Compile Remove="Migrations\20180806045635_05.Designer.cs" />
+    <Compile Remove="Migrations\20180806045758_05.cs" />
+    <Compile Remove="Migrations\20180806045758_05.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using CardinalInventoryWebApi.Data.EventManagement;
 using CardinalInventoryWebApi.Data.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ namespace CardinalInventoryWebApi.Data
         {
             base.OnModelCreating(builder);
 
+            #region Inventory DbContext
             builder.Entity<StockItem>()
                    .HasKey(s => s.StockItemId);
             builder.Entity<StockItem>()
@@ -112,10 +114,108 @@ namespace CardinalInventoryWebApi.Data
             builder.Entity<InventoryHistory>()
                    .Property(i => i.Quantity)
                    .HasColumnType("decimal(6,2)");
+            #endregion
+
+            #region EventManagement DbContext
+            builder.Entity<Event>()
+                   .HasKey(e => e.EventId);
+
+            builder.Entity<EventStation>()
+                   .HasKey(e => e.EventStationId);
+
+            builder.Entity<EventTicketAdmissionType>()
+                   .HasKey(e => e.EventTicketAdmissionTypeId);
+            builder.Entity<EventTicketAdmissionType>()
+                   .HasOne(e => e.Event)
+                   .WithMany()
+                   .HasForeignKey("EventId");
+            builder.Entity<EventTicketAdmissionType>()
+                   .Property(e => e.Level)
+                   .IsRequired(true);
+
+            builder.Entity<EventStationAssignment>()
+                   .HasKey(e => new { e.EventId, e.EventStationId });
+            builder.Entity<EventStationAssignment>()
+                   .HasOne(e => e.Event)
+                   .WithMany()
+                   .HasForeignKey("EventId");
+            builder.Entity<EventStationAssignment>()
+                   .HasOne(e => e.EventStation)
+                   .WithMany()
+                   .HasForeignKey("EventStationId")
+                   .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<EventStationAssignment>()
+                   .HasOne(e => e.EventTicketAdmissionType)
+                   .WithMany()
+                   .HasForeignKey("EventTicketAdmissionTypeId")
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<EventCustomer>()
+                   .HasKey(e => e.EventCustomerId);
+
+            builder.Entity<EventTicket>()
+                   .HasKey(e => e.EventTicketId);
+            builder.Entity<EventTicket>()
+                   .HasOne(e => e.Event)
+                   .WithMany()
+                   .HasForeignKey("EventId");
+            builder.Entity<EventTicket>()
+                   .HasOne(e => e.EventTicketAdmissionType)
+                   .WithMany()
+                   .HasForeignKey("EventTicketAdmissionTypeId")
+                   .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<EventTicket>()
+                   .HasOne(e => e.EventCustomer)
+                   .WithMany()
+                   .HasForeignKey("EventCustomerId");
+            builder.Entity<EventTicket>()
+                   .Property(e => e.Enabled)
+                   .HasDefaultValue(true);
+            builder.Entity<EventTicket>()
+                   .Property(e => e.UniqueIdentifier)
+                   .IsRequired(true);
+
+            builder.Entity<EventTicketHistory>()
+                   .HasKey(e => e.EventTicketHistoryId);
+            builder.Entity<EventTicketHistory>()
+                   .Property(e => e.EventTicketId)
+                   .IsRequired(true);
+            builder.Entity<EventTicketHistory>()
+                   .Property(e => e.ApplicationUserId)
+                   .IsRequired(true);
+
+            builder.Entity<EventTicketStatus>()
+                   .HasKey(e => new { e.EventTicketId, e.EventTicketAdmissionTypeId });
+            builder.Entity<EventTicketStatus>()
+                   .HasOne(e => e.EventTicket)
+                   .WithMany()
+                   .HasForeignKey("EventTicketId")
+                   .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<EventTicketStatus>()
+                   .HasOne(e => e.EventTicketAdmissionType)
+                   .WithMany()
+                   .HasForeignKey("EventTicketAdmissionTypeId");
+
+            builder.Entity<EventTicketStatusHistory>()
+                   .HasKey(e => e.EventTicketStatusHistoryId);
+            builder.Entity<EventTicketStatusHistory>()
+                   .HasOne(e => e.EventTicket)
+                   .WithMany()
+                   .HasForeignKey("EventTicketId")
+                   .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<EventTicketStatusHistory>()
+                   .HasOne(e => e.EventTicketAdmissionType)
+                   .WithMany()
+                   .HasForeignKey("EventTicketAdmissionTypeId");
+            builder.Entity<EventTicketStatusHistory>()
+                   .HasOne(e => e.EventStation)
+                   .WithMany()
+                   .HasForeignKey("EventStationId");
+            #endregion
         }
 
+        //Inventory
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        //public DbSet<StockItemCategory> StockItemCategories { get; set; }
         public DbSet<StockItem> StockItems { get; set; }
         public DbSet<StockItemTag> StockItemTags { get; set; }
         public DbSet<SerializedStockItem> SerializedStockItems { get; set; }
@@ -126,5 +226,16 @@ namespace CardinalInventoryWebApi.Data
         public DbSet<Area> Areas { get; set; }
         public DbSet<InventoryActionHistory> InventoryActionHistories { get; set; }
         public DbSet<InventoryHistory> InventoryHistories { get; set; }
+
+        //EventManagement
+        public DbSet<Event> Events { get; set; }
+        public DbSet<EventStation> EventStations { get; set; }
+        public DbSet<EventTicketAdmissionType> EventTicketAdmissionTypes { get; set; }
+        public DbSet<EventStationAssignment> EventStationAssignments { get; set; }
+        public DbSet<EventCustomer> EventCustomers { get; set; }
+        public DbSet<EventTicket> EventTickets { get; set; }
+        public DbSet<EventTicketHistory> EventTicketHistories { get; set; }
+        public DbSet<EventTicketStatus> EventTicketStatuses { get; set; }
+        public DbSet<EventTicketStatusHistory> EventTicketStatusHistories { get; set; }
     }
 }
