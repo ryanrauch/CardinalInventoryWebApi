@@ -119,6 +119,9 @@ namespace CardinalInventoryWebApi.Data
             #region EventManagement DbContext
             builder.Entity<Event>()
                    .HasKey(e => e.EventId);
+            builder.Entity<Event>()
+                   .Property(e => e.Completed)
+                   .HasDefaultValue(false);
 
             builder.Entity<EventStation>()
                    .HasKey(e => e.EventStationId);

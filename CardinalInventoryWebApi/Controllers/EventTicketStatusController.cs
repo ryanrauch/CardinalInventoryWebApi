@@ -47,6 +47,7 @@ namespace CardinalInventoryWebApi.Controllers
             return Ok(eventTicketStatus);
         }
 
+        /*
         // PUT: api/EventTicketStatus/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEventTicketStatus([FromRoute] Guid id, [FromBody] EventTicketStatus eventTicketStatus)
@@ -131,6 +132,7 @@ namespace CardinalInventoryWebApi.Controllers
 
             return Ok(eventTicketStatus);
         }
+        */
 
         private bool EventTicketStatusExists(Guid id)
         {

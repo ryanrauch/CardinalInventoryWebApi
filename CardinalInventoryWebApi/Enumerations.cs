@@ -36,8 +36,11 @@ namespace CardinalInventoryWebApi
         Successful = 0,
         Duplicate = 1,
         UnknownUniqueIdentifier = 2,
-        TicketDisabled = 3,
-        TicketAdmissionTypeIssue = 4,
-        Error = 5
+        UnknownEventStationId = 3,
+        UnknownEventStationAdmissionType = 4,
+        CompletedEventId = 5,
+        TicketDisabled = 6,
+        TicketAdmissionTypeIssue = 7,
+        Error = 8
     }
 }
