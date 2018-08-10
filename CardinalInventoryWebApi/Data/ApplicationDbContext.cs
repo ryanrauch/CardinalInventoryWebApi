@@ -24,7 +24,7 @@ namespace CardinalInventoryWebApi.Data
                    .HasKey(s => s.StockItemId);
             builder.Entity<StockItem>()
                    .Property(i => i.UnitCost)
-                   .HasColumnType("decimal(6,2)");
+                   .HasColumnType("decimal(8,2)");
 
             builder.Entity<StockItemTag>()
                    .HasKey(s => s.StockItemTagId);
@@ -45,10 +45,13 @@ namespace CardinalInventoryWebApi.Data
                    .HasForeignKey("AreaId");
             builder.Entity<SerializedStockItem>()
                    .Property(i => i.UnitCost)
-                   .HasColumnType("decimal(6,2)");
+                   .HasColumnType("decimal(8,2)");
             builder.Entity<SerializedStockItem>()
                    .Property(i => i.Barcode)
                    .IsRequired(true);
+            builder.Entity<SerializedStockItem>()
+                   .Property(i => i.CurrentItemLevel)
+                   .HasColumnType("decimal(4,3)");
 
             builder.Entity<Company>()
                    .HasKey(i => i.CompanyId);
@@ -98,7 +101,7 @@ namespace CardinalInventoryWebApi.Data
                    .HasForeignKey("ApplicationUserId");
             builder.Entity<InventoryActionHistory>()
                    .Property(i => i.ItemLevel)
-                   .HasColumnType("decimal(6,2)");
+                   .HasColumnType("decimal(8,2)");
 
             // possibly remove this
             builder.Entity<InventoryHistory>()
@@ -113,15 +116,15 @@ namespace CardinalInventoryWebApi.Data
                    .HasForeignKey("StockItemId");
             builder.Entity<InventoryHistory>()
                    .Property(i => i.Quantity)
-                   .HasColumnType("decimal(6,2)");
+                   .HasColumnType("decimal(8,2)");
             #endregion
 
             #region EventManagement DbContext
             builder.Entity<Event>()
                    .HasKey(e => e.EventId);
-            builder.Entity<Event>()
-                   .Property(e => e.Completed)
-                   .HasDefaultValue(false);
+            //builder.Entity<Event>()
+            //       .Property(e => e.Completed)
+            //       .HasDefaultValue(false);
 
             builder.Entity<EventStation>()
                    .HasKey(e => e.EventStationId);
@@ -152,6 +155,11 @@ namespace CardinalInventoryWebApi.Data
                    .WithMany()
                    .HasForeignKey("EventTicketAdmissionTypeId")
                    .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<EventStationAssignment>()
+                   .HasOne(e => e.GateEventTicketAdmissionType)
+                   .WithMany()
+                   .HasForeignKey("GateEventTicketAdmissionTypeId")
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<EventCustomer>()
                    .HasKey(e => e.EventCustomerId);
@@ -176,9 +184,9 @@ namespace CardinalInventoryWebApi.Data
                    .HasOne(e => e.EventCustomer)
                    .WithMany()
                    .HasForeignKey("EventCustomerId");
-            builder.Entity<EventTicket>()
-                   .Property(e => e.Enabled)
-                   .HasDefaultValue(true);
+            //builder.Entity<EventTicket>()
+            //       .Property(e => e.Enabled)
+            //       .HasDefaultValue(true);
             builder.Entity<EventTicket>()
                    .Property(e => e.UniqueIdentifier)
                    .IsRequired(true);

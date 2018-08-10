@@ -32,7 +32,8 @@ namespace CardinalInventoryWebApi.Controllers
             }
 
             // Check that a valid ticket exists
-            var ticket = _context.EventTickets.FirstOrDefault(e => e.UniqueIdentifier.Equals(etsc.TicketUID));
+            var ticket = _context.EventTickets
+                                 .FirstOrDefault(e => e.UniqueIdentifier.Equals(etsc.TicketUID));
             if(ticket == null)
             {
                 return Ok(EventStationProcessResult.UnknownUniqueIdentifier);
@@ -44,30 +45,34 @@ namespace CardinalInventoryWebApi.Controllers
             }
 
             // Check that it is not an old ticket from a previous event still in database
-            var currentEvent = _context.Events.FirstOrDefault(e => e.EventId.Equals(ticket.EventId)
-                                                                && e.Completed.Equals(false));
+            var currentEvent = _context.Events
+                                       .FirstOrDefault(e => e.EventId.Equals(ticket.EventId)
+                                                         && e.Completed.Equals(false));
             if(currentEvent == null)
             {
                 return Ok(EventStationProcessResult.CompletedEventId);
             }
 
             // Check that a station exists for the ticket's event
-            var station = _context.EventStations.FirstOrDefault(e => e.EventStationId.Equals(etsc.EventStationId));
+            var station = _context.EventStations
+                                  .FirstOrDefault(e => e.EventStationId.Equals(etsc.EventStationId));
             if (station == null)
             {
                 return Ok(EventStationProcessResult.UnknownEventStationId);
             }
 
             // Check that the station assignment exists for the ticket's event
-            var stationAssignment = _context.EventStationAssignments.FirstOrDefault(e => e.EventStationId.Equals(etsc.EventStationId)
-                                                                                      && e.EventId.Equals(ticket.EventId));
+            var stationAssignment = _context.EventStationAssignments
+                                            .FirstOrDefault(e => e.EventStationId.Equals(etsc.EventStationId)
+                                                              && e.EventId.Equals(ticket.EventId));
             if(stationAssignment == null)
             {
-                return Ok(EventStationProcessResult.UnknownEventStationId);
+                return Ok(EventStationProcessResult.UnknownEventStationAssignmentId);
             }
 
             // Check that the station has a valid EventTicketAdmissionType
-            var stationAdmissionType = _context.EventTicketAdmissionTypes.FirstOrDefault(e => e.EventTicketAdmissionTypeId.Equals(stationAssignment.EventTicketAdmissionTypeId));
+            var stationAdmissionType = _context.EventTicketAdmissionTypes
+                                               .FirstOrDefault(e => e.EventTicketAdmissionTypeId.Equals(stationAssignment.EventTicketAdmissionTypeId));
             if(stationAdmissionType == null)
             {
                 await CreateEventTicketStatusHistory(ticket.EventTicketId,
@@ -78,49 +83,82 @@ namespace CardinalInventoryWebApi.Controllers
                 return Ok(EventStationProcessResult.UnknownEventStationAdmissionType);
             }
 
-            var insideRecords = await _context.EventTicketStatuses.Where(e => e.EventTicketId.Equals(ticket.EventTicketId)).ToListAsync();
-            if(insideRecords.Count == 0)
+            // Check that the ticket is allowed for specific EventTicketAdmissionType
+            if(!ticket.EventTicketAdmissionTypeId.Equals(stationAdmissionType))
             {
-                if (stationAssignment.ControlType == EventStationControlType.EntryGate)
-                {
-                    var entered = new EventTicketStatus()
+                await CreateEventTicketStatusHistory(ticket.EventTicketId,
+                                                     stationAdmissionType.EventTicketAdmissionTypeId,
+                                                     stationAssignment.EventStationId,
+                                                     stationAssignment.ControlType,
+                                                     EventStationProcessResult.TicketAdmissionTypeIssue);
+                return Ok(EventStationProcessResult.TicketAdmissionTypeIssue);
+            }
+
+            // Check that the station has a valid GateEventTicketAdmissionType
+            var stationGateAdmissionType = await _context.EventTicketAdmissionTypes
+                                                         .FirstOrDefaultAsync(e => e.EventTicketAdmissionTypeId.Equals(stationAssignment.GateEventTicketAdmissionTypeId));
+            if (stationGateAdmissionType == null)
+            {
+                await CreateEventTicketStatusHistory(ticket.EventTicketId,
+                                                     stationAdmissionType.EventTicketAdmissionTypeId,
+                                                     stationAssignment.EventStationId,
+                                                     stationAssignment.ControlType,
+                                                     EventStationProcessResult.UnknownEventStationAdmissionType);
+                return Ok(EventStationProcessResult.UnknownEventStationAdmissionTypeGate);
+            }
+
+            var insideRecord = await _context.EventTicketStatuses
+                                             .FirstOrDefaultAsync(e => e.EventTicketId.Equals(ticket.EventTicketId)
+                                                                    && e.EventTicketAdmissionTypeId.Equals(stationAssignment.GateEventTicketAdmissionTypeId));
+
+            switch (stationAssignment.ControlType)
+            {
+                case EventStationControlType.EntryGate:
+                    if (insideRecord == null)
                     {
-                        EventTicketId = ticket.EventTicketId,
-                        EventTicketAdmissionTypeId = stationAssignment.EventTicketAdmissionTypeId,
-                        TimeStamp = DateTime.UtcNow
-                    };
-                    await _context.EventTicketStatuses.AddAsync(entered);
-                }
-                else if (stationAssignment.ControlType == EventStationControlType.ExitGate)
-                {
-                    //var eventst
-                }
-                await _context.SaveChangesAsync();
-                return Ok(EventStationProcessResult.Successful); 
+                        await CreateEventTicketStatusHistory(ticket.EventTicketId,
+                                             stationAdmissionType.EventTicketAdmissionTypeId,
+                                             stationAssignment.EventStationId,
+                                             stationAssignment.ControlType,
+                                             EventStationProcessResult.Successful);
+
+                        var entered = new EventTicketStatus()
+                        {
+                            EventTicketId = ticket.EventTicketId,
+                            EventTicketAdmissionTypeId = stationAssignment.GateEventTicketAdmissionTypeId,
+                            TimeStamp = DateTime.UtcNow
+                        };
+                        await _context.EventTicketStatuses.AddAsync(entered);
+                        await _context.SaveChangesAsync();
+                        return Ok(EventStationProcessResult.Successful);
+                    }
+                    else
+                    {
+                        await CreateEventTicketStatusHistory(ticket.EventTicketId,
+                                             stationAdmissionType.EventTicketAdmissionTypeId,
+                                             stationAssignment.EventStationId,
+                                             stationAssignment.ControlType,
+                                             EventStationProcessResult.Duplicate);
+                        return Ok(EventStationProcessResult.Duplicate);
+                    }
+                case EventStationControlType.ExitGate:
+                    if(insideRecord != null)
+                    {
+                        await CreateEventTicketStatusHistory(ticket.EventTicketId,
+                                             stationAdmissionType.EventTicketAdmissionTypeId,
+                                             stationAssignment.EventStationId,
+                                             stationAssignment.ControlType,
+                                             EventStationProcessResult.Successful);
+                        _context.EventTicketStatuses.Remove(insideRecord);
+                        await _context.SaveChangesAsync();
+                    }
+                    break;
+                case EventStationControlType.ValidationOnly:
+                    return Ok(EventStationProcessResult.Successful);
             }
-            foreach(var ins in insideRecords)
-            {
-                //if(ins.)
-            }
-            //_context.EventTicketStatuses.Add(eventTicketStatus);
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateException)
-            //{
-            //    if (EventTicketStatusExists(eventTicketStatus.EventTicketId))
-            //    {
-            //        return new StatusCodeResult(StatusCodes.Status409Conflict);
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
 
             //return CreatedAtAction("GetEventTicketStatus", new { id = eventTicketStatus.EventTicketId }, eventTicketStatus);
-            return Ok();
+            return NotFound();
         }
 
         private async Task CreateEventTicketStatusHistory(
