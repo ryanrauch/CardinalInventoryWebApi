@@ -163,11 +163,6 @@ namespace CardinalInventoryWebApi.Data
 
             builder.Entity<EventCustomer>()
                    .HasKey(e => e.EventCustomerId);
-            builder.Entity<EventCustomer>()
-                   .HasOne(e => e.ApplicationUser)
-                   .WithMany()
-                   .HasForeignKey("ApplicationUserId")
-                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<EventTicket>()
                    .HasKey(e => e.EventTicketId);

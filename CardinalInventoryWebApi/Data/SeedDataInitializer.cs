@@ -1,4 +1,5 @@
-﻿using CardinalInventoryWebApi.Data.Models;
+﻿using CardinalInventoryWebApi.Data.EventManagement;
+using CardinalInventoryWebApi.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,82 @@ namespace CardinalInventoryWebApi.Data
         {
             using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
-                if(context.Bars.Count() == 0)
+                if(context.Events.Count() == 0)
+                {
+                    var station = new EventStation()
+                    {
+                        EventStationId = Guid.NewGuid(),
+                        Description = "TestStation01",
+                        Hardware = EventStationHardware.RPIwithPN532
+                    };
+                    await context.EventStations.AddAsync(station);
+                    await context.SaveChangesAsync();
+
+                    var evt = new Event()
+                    {
+                        EventId = Guid.NewGuid(),
+                        Description = "TestEvent",
+                        Completed = false
+                    };
+                    await context.Events.AddAsync(evt);
+                    await context.SaveChangesAsync();
+
+                    var admissionType = new EventTicketAdmissionType()
+                    {
+                        EventTicketAdmissionTypeId = Guid.NewGuid(),
+                        Description = "General Admission",
+                        EventId = evt.EventId,
+                        Level = 1
+                    };
+                    await context.EventTicketAdmissionTypes.AddAsync(admissionType);
+                    await context.SaveChangesAsync();
+                    var admissionTypeVIP = new EventTicketAdmissionType()
+                    {
+                        EventTicketAdmissionTypeId = Guid.NewGuid(),
+                        Description = "VIP",
+                        EventId = evt.EventId,
+                        Level = 10
+                    };
+                    await context.EventTicketAdmissionTypes.AddAsync(admissionTypeVIP);
+                    await context.SaveChangesAsync();
+
+                    var stationAssignment = new EventStationAssignment()
+                    {
+                        EventId = evt.EventId,
+                        EventStationId = station.EventStationId,
+                        ControlType = EventStationControlType.EntryGate,
+                        EventTicketAdmissionTypeId = admissionType.EventTicketAdmissionTypeId,
+                        GateEventTicketAdmissionTypeId = admissionType.EventTicketAdmissionTypeId
+                    };
+                    await context.EventStationAssignments.AddAsync(stationAssignment);
+                    await context.SaveChangesAsync();
+
+                    var cust = new EventCustomer()
+                    {
+                        EventCustomerId = Guid.NewGuid(),
+                        Email = "RAUCH.RYAN@GMAIL.COM",
+                        FirstName = "Ryan",
+                        LastName = "Rauch",
+                        TimeStamp = DateTime.Now
+                    };
+                    await context.EventCustomers.AddAsync(cust);
+                    await context.SaveChangesAsync();
+
+                    var ticket = new EventTicket()
+                    {
+                        EventTicketId = Guid.NewGuid(),
+                        EventId = evt.EventId,
+                        EventTicketAdmissionTypeId = admissionType.EventTicketAdmissionTypeId,
+                        UniqueIdentifier = "TESTTICKET01",
+                        TicketPhysicalType = TicketPhysicalType.PaperQRcode,
+                        EventCustomerId = cust.EventCustomerId
+                    };
+                    await context.EventTickets.AddAsync(ticket);
+                    await context.SaveChangesAsync();
+
+                }
+
+                if (context.Bars.Count() == 0)
                 {
                     var company = new Company()
                     {

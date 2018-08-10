@@ -28,7 +28,8 @@ namespace CardinalInventoryWebApi
 
     public enum TicketPhysicalType
     {
-        RFIDWristBand = 0
+        RFIDWristBand = 0,
+        PaperQRcode = 1
     }
 
     public enum EventStationProcessResult

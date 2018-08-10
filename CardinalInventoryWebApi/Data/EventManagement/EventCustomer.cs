@@ -14,6 +14,5 @@ namespace CardinalInventoryWebApi.Data.EventManagement
         public string Email { get; set; }
         public DateTime TimeStamp { get; set; }
         public Guid ApplicationUserId { get; set; }
-        public ApplicationUser ApplicationUser { get; set; }
     }
 }
