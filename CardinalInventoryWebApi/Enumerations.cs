@@ -46,4 +46,10 @@ namespace CardinalInventoryWebApi
         TicketAdmissionTypeIssue = 9,
         Error = 10
     }
+
+    public enum SmartWatchWristOrientation
+    {
+        LeftHanded = 0,
+        RightHanded = 1
+    }
 }

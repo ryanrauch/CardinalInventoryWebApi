@@ -16,5 +16,6 @@ namespace CardinalInventoryWebApi.Data.SmartWatch
         public double AttitudeRollOffset { get; set; } //Radians
         public Guid PourSpoutId { get; set; }
         public PourSpout PourSpout { get; set; }
+        public SmartWatchWristOrientation WristOrientation { get; set; }
     }
 }
