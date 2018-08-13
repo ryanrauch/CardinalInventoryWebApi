@@ -1,5 +1,6 @@
 ﻿using CardinalInventoryWebApi.Data.EventManagement;
 using CardinalInventoryWebApi.Data.Models;
+using CardinalInventoryWebApi.Data.SmartWatch;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,30 @@ namespace CardinalInventoryWebApi.Data
         {
             using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
-                if(context.Events.Count() == 0)
+                if(context.PourSpouts.Count() == 0)
+                {
+                    var spillstop01 = new PourSpout()
+                    {
+                        PourSpoutId = Guid.NewGuid(),
+                        Description = "Spill-Stop 285-50",
+                        DurationForOneLiter = 51.14,
+                        ImagePath = "spill-stop-285-50.jpg"
+                    };
+                    await context.PourSpouts.AddAsync(spillstop01);
+                    await context.SaveChangesAsync();
+
+                    var spillstop02 = new PourSpout()
+                    {
+                        PourSpoutId = Guid.NewGuid(),
+                        Description = "Spill-Stop 285-60",
+                        DurationForOneLiter = 51.14,
+                        ImagePath = "spill-stop-285-60.jpg"
+                    };
+                    await context.PourSpouts.AddAsync(spillstop02);
+                    await context.SaveChangesAsync();
+                }
+
+                if (context.Events.Count() == 0)
                 {
                     var station = new EventStation()
                     {

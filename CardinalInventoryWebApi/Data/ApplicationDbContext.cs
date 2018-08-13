@@ -226,11 +226,18 @@ namespace CardinalInventoryWebApi.Data
             #endregion
 
             #region SmartWatch DbContext
+            builder.Entity<PourSpout>()
+                   .HasKey(p => p.PourSpoutId);
+
             builder.Entity<SmartWatchSession>()
                    .HasKey(e => e.SmartWatchSessionId);
             builder.Entity<SmartWatchSession>()
                    .Property(i => i.IntervalDuration)
                    .HasColumnType("decimal(5,3)");
+            builder.Entity<SmartWatchSession>()
+                   .HasOne(e => e.PourSpout)
+                   .WithMany()
+                   .HasForeignKey("PourSpoutId");
 
             builder.Entity<SmartWatchSessionData>()
                    .HasKey(e => new { e.Interval, e.SmartWatchSessionId });
@@ -268,5 +275,6 @@ namespace CardinalInventoryWebApi.Data
         //SmartWatch
         public DbSet<SmartWatchSession> SmartWatchSessions { get; set; }
         public DbSet<SmartWatchSessionData> SmartWatchSessionData { get; set; }
+        public DbSet<PourSpout> PourSpouts { get; set; }
     }
 }

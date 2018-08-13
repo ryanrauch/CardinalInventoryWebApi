@@ -14,5 +14,7 @@ namespace CardinalInventoryWebApi.Data.SmartWatch
         public int IntervalStart { get; set; }
         public int IntervalStop { get; set; }
         public double AttitudeRollOffset { get; set; } //Radians
+        public Guid PourSpoutId { get; set; }
+        public PourSpout PourSpout { get; set; }
     }
 }
