@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using CardinalInventoryWebApi.Data.EventManagement;
 using CardinalInventoryWebApi.Data.Models;
+using CardinalInventoryWebApi.Data.SmartWatch;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -223,6 +224,21 @@ namespace CardinalInventoryWebApi.Data
                    .WithMany()
                    .HasForeignKey("EventStationId");
             #endregion
+
+            #region SmartWatch DbContext
+            builder.Entity<SmartWatchSession>()
+                   .HasKey(e => e.SmartWatchSessionId);
+            builder.Entity<SmartWatchSession>()
+                   .Property(i => i.IntervalDuration)
+                   .HasColumnType("decimal(5,3)");
+
+            builder.Entity<SmartWatchSessionData>()
+                   .HasKey(e => new { e.Interval, e.SmartWatchSessionId });
+            builder.Entity<SmartWatchSessionData>()
+                   .HasOne(e => e.SmartWatchSession)
+                   .WithMany()
+                   .HasForeignKey("SmartWatchSessionId");
+            #endregion
         }
 
         //Inventory
@@ -248,5 +264,9 @@ namespace CardinalInventoryWebApi.Data
         public DbSet<EventTicketHistory> EventTicketHistories { get; set; }
         public DbSet<EventTicketStatus> EventTicketStatuses { get; set; }
         public DbSet<EventTicketStatusHistory> EventTicketStatusHistories { get; set; }
+
+        //SmartWatch
+        public DbSet<SmartWatchSession> SmartWatchSessions { get; set; }
+        public DbSet<SmartWatchSessionData> SmartWatchSessionData { get; set; }
     }
 }

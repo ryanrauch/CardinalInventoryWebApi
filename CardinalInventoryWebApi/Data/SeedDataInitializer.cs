@@ -86,7 +86,8 @@ namespace CardinalInventoryWebApi.Data
                         EventTicketAdmissionTypeId = admissionType.EventTicketAdmissionTypeId,
                         UniqueIdentifier = "TESTTICKET01",
                         TicketPhysicalType = TicketPhysicalType.PaperQRcode,
-                        EventCustomerId = cust.EventCustomerId
+                        EventCustomerId = cust.EventCustomerId,
+                        Enabled = true
                     };
                     await context.EventTickets.AddAsync(ticket);
                     await context.SaveChangesAsync();
