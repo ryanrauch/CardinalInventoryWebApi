@@ -22,5 +22,6 @@ namespace CardinalInventoryWebApi.Data.SmartWatch
         public double AccelerometerX { get; set; }
         public double AccelerometerY { get; set; }
         public double AccelerometerZ { get; set; }
+        public UInt64 TimestampUnixMs { get; set; }
     }
 }
