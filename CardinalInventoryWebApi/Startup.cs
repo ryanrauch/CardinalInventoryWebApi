@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CardinalInventoryWebApi.Data.Models;
+using CardinalInventoryWebApi.Hubs;
 
 namespace CardinalInventoryWebApi
 {
@@ -70,6 +71,8 @@ namespace CardinalInventoryWebApi
             //        ClockSkew = TimeSpan.FromMinutes(5) //5 minute tolerance for the expiration date
             //    };
             //});
+
+            //services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,13 +95,19 @@ namespace CardinalInventoryWebApi
             app.UseCookiePolicy();
 
             app.UseAuthentication();
-            
+
+            //app.UseSignalR(routes =>
+            //{
+            //    routes.MapHub<WeightScaleHub>("/weightScaleHub");
+            //});
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
         }
     }
 }

@@ -30,14 +30,18 @@ namespace CardinalInventoryWebApi.Controllers
 
         // GET: api/SmartWatchSessionData/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSmartWatchSessionData([FromRoute] int id)
+        public async Task<IActionResult> GetSmartWatchSessionData([FromRoute] Guid id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var smartWatchSessionData = await _context.SmartWatchSessionData.FindAsync(id);
+            //var smartWatchSessionData = await _context.SmartWatchSessionData.FindAsync(id);
+            var smartWatchSessionData = await _context.SmartWatchSessionData
+                                                      .Where(s => s.SmartWatchSessionId.Equals(id))
+                                                      .OrderBy(s => s.Interval)
+                                                      .ToListAsync();
 
             if (smartWatchSessionData == null)
             {
