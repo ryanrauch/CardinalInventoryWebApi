@@ -32,7 +32,9 @@ namespace CardinalInventoryWebApi.Data
                         CalibrationUnitsLong = "grams",
                         RefreshMilliseconds = 250,
                         StableCount = 2,
-                        StableThreshold = 2
+                        StableThreshold = 2,
+                        ReadCountAverage = 5,
+                        ReadCountMilliseconds = 10
                     };
                     await context.DeviceScales.AddAsync(ds);
                     await context.SaveChangesAsync();

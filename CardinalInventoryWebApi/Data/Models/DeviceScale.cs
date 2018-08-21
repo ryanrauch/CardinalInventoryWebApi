@@ -17,5 +17,7 @@ namespace CardinalInventoryWebApi.Data.Models
         public Int32 RefreshMilliseconds { get; set; }
         public Int32 StableThreshold { get; set; }
         public Int32 StableCount { get; set; }
+        public Int32 ReadCountAverage { get; set; }
+        public Int32 ReadCountMilliseconds { get; set; }
     }
 }
