@@ -19,6 +19,25 @@ namespace CardinalInventoryWebApi.Data
         {
             using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
+                if(context.DeviceScales.Count() == 0)
+                {
+                    var ds = new DeviceScale()
+                    {
+                        DeviceScaleId = Guid.NewGuid(),
+                        DeviceName = "CardinalRPI01",
+                        DeviceScaleType = DeviceScaleType.RPIwithHX711max5kg,
+                        DebugMode = true,
+                        CalibrationConstant = -389,
+                        CalibrationUnits = "g",
+                        CalibrationUnitsLong = "grams",
+                        RefreshMilliseconds = 250,
+                        StableCount = 2,
+                        StableThreshold = 2
+                    };
+                    await context.DeviceScales.AddAsync(ds);
+                    await context.SaveChangesAsync();
+                }
+
                 if(context.PourSpouts.Count() == 0)
                 {
                     var spillstop01 = new PourSpout()

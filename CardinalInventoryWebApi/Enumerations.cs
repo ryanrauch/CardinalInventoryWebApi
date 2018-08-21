@@ -52,4 +52,10 @@ namespace CardinalInventoryWebApi
         LeftHanded = 0,
         RightHanded = 1
     }
+
+    public enum DeviceScaleType
+    {
+        RPIwithHX711max5kg = 0,
+        RPIwithHX711max10kg = 1
+    }
 }

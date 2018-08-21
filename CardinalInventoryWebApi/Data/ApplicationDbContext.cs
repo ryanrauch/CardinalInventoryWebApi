@@ -118,6 +118,9 @@ namespace CardinalInventoryWebApi.Data
             builder.Entity<InventoryHistory>()
                    .Property(i => i.Quantity)
                    .HasColumnType("decimal(8,2)");
+
+            builder.Entity<DeviceScale>()
+                   .HasKey(a => a.DeviceScaleId);
             #endregion
 
             #region EventManagement DbContext
@@ -260,6 +263,8 @@ namespace CardinalInventoryWebApi.Data
         public DbSet<Area> Areas { get; set; }
         public DbSet<InventoryActionHistory> InventoryActionHistories { get; set; }
         public DbSet<InventoryHistory> InventoryHistories { get; set; }
+        public DbSet<DeviceScale> DeviceScales { get; set; }
+
 
         //EventManagement
         public DbSet<Event> Events { get; set; }
