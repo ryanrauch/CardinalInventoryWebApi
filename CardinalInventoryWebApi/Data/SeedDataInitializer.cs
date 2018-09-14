@@ -197,7 +197,8 @@ namespace CardinalInventoryWebApi.Data
                         StockItemId = Guid.NewGuid(),
                         Description = "Tito's Handmade Vodka 1L",
                         SKU = "1994700001",
-                        UnitSizeMilliliters=1000
+                        ImagePath= "titos-handmade-vodka-1L.png",
+                        UnitSizeMilliliters =1000
                     };
                     await context.StockItems.AddAsync(titos);
                     await context.SaveChangesAsync();
@@ -212,6 +213,29 @@ namespace CardinalInventoryWebApi.Data
                         LastModifiedDate = DateTime.Now
                     };
                     await context.SerializedStockItems.AddAsync(stitos);
+                    await context.SaveChangesAsync();
+
+                    var jameson = new StockItem()
+                    {
+                        StockItemId = Guid.NewGuid(),
+                        Description = "Jameson Irish Whiskey 1L",
+                        SKU = "8043250011",
+                        ImagePath= "jameson-irish-whiskey-1L.png",
+                        UnitSizeMilliliters = 1000
+                    };
+                    await context.StockItems.AddAsync(jameson);
+                    await context.SaveChangesAsync();
+
+                    var sjameson = new SerializedStockItem()
+                    {
+                        SerializedStockItemId = Guid.NewGuid(),
+                        StockItemId = jameson.StockItemId,
+                        Barcode = "01209914",
+                        CurrentItemLevel = 1.0M,
+                        ReceivedDate = DateTime.Now,
+                        LastModifiedDate = DateTime.Now
+                    };
+                    await context.SerializedStockItems.AddAsync(sjameson);
                     await context.SaveChangesAsync();
                 }
 

@@ -248,6 +248,9 @@ namespace CardinalInventoryWebApi.Data
                    .HasOne(e => e.SmartWatchSession)
                    .WithMany()
                    .HasForeignKey("SmartWatchSessionId");
+
+            builder.Entity<SmartWatchConfiguration>()
+                   .HasKey(e => e.SmartWatchConfigurationId);
             #endregion
         }
 
@@ -281,5 +284,6 @@ namespace CardinalInventoryWebApi.Data
         public DbSet<SmartWatchSession> SmartWatchSessions { get; set; }
         public DbSet<SmartWatchSessionData> SmartWatchSessionData { get; set; }
         public DbSet<PourSpout> PourSpouts { get; set; }
+        public DbSet<SmartWatchConfiguration> SmartWatchConfigurations { get; set; }
     }
 }

@@ -22,11 +22,11 @@ namespace CardinalInventoryWebApi.Controllers
         }
 
         // GET: api/SmartWatchSessionData
-        [HttpGet]
-        public IEnumerable<SmartWatchSessionData> GetSmartWatchSessionData()
-        {
-            return _context.SmartWatchSessionData;
-        }
+        //[HttpGet]
+        //public IEnumerable<SmartWatchSessionData> GetSmartWatchSessionData()
+        //{
+        //    return _context.SmartWatchSessionData;
+        //}
 
         // GET: api/SmartWatchSessionData/5
         [HttpGet("{id}")]
